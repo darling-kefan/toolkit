@@ -53,7 +53,14 @@ func (fp FileProvider) Provide() (map[string]string, error) {
 		}
 
 		// add the item to the config
-		config[line[:index]] = line[index+1:]
+		key, val := line[:index], line[index+1:]
+		if strings.HasPrefix(val, "\"") && strings.HasSuffix(val, "\"") {
+			config[key] = strings.Trim(val, "\"")
+		} else if strings.HasPrefix(val, "'") && strings.HasSuffix(val, "'") {
+			config[key] = strings.Trim(val, "'")
+		} else {
+			config[key] = val
+		}
 	}
 
 	return config, nil
